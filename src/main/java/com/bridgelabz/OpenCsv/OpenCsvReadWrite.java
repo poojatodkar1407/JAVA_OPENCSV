@@ -1,31 +1,35 @@
 package com.bridgelabz.OpenCsv;
 
-import com.opencsv.CSVReader;
 
-import javax.print.DocFlavor;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
+
+
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
+import java.util.Iterator;
+
 
 public class OpenCsvReadWrite {
 
-    private static final String SAMPLE_CSV_FILE_PATH = "/home/abc/Desktop/users.csv";
+    private static final String SAMPLE_CSV_FILE_PATH = "/home/abc/Desktop/users-with-header.csv";
 
     public static void main(String[] args) throws IOException {
-        try(
-                Reader reader = Files.newBufferedReader(Paths.get(SAMPLE_CSV_FILE_PATH));
-                CSVReader csvReader = new CSVReader(reader);
-        ) {
-            List<String[]> nextRecords = csvReader.readAll();
-            for(String[] nextRecord : nextRecords){
-                System.out.println("NAME:"+nextRecord[0]);
-                System.out.println("Email:"+nextRecord[1]);
-                System.out.println("Phone:"+nextRecord[2]);
-                System.out.println("Country:"+nextRecord[3]);
-                System.out.println("==============================");
-            }
+    try(Reader reader = Files.newBufferedReader(Paths.get(SAMPLE_CSV_FILE_PATH))){
+        CsvToBean<CSVUser> csvToBean = new CsvToBeanBuilder(reader).withType(CSVUser.class).withIgnoreLeadingWhiteSpace(true).build();
+
+        Iterator<CSVUser> csvUserIterator = csvToBean.iterator();
+
+        while(csvUserIterator.hasNext()){
+            CSVUser csvUser = csvUserIterator.next();
+            System.out.println("NAME:"+csvUser.getName());
+            System.out.println("Email:"+csvUser.getEmail());
+            System.out.println("PhoneNo:"+csvUser.getPhoneNo());
+            System.out.println("Country:"+csvUser.getCountry());
+            System.out.println("===================================");
         }
+        };
     }
 }
