@@ -1,6 +1,7 @@
 package com.bridgelabz.OpenCsv;
 
 
+import com.opencsv.bean.ColumnPositionMappingStrategy;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -18,17 +20,21 @@ public class OpenCsvReadWrite {
 
     public static void main(String[] args) throws IOException {
     try(Reader reader = Files.newBufferedReader(Paths.get(SAMPLE_CSV_FILE_PATH))){
-        CsvToBean<CSVUser> csvToBean = new CsvToBeanBuilder(reader).withType(CSVUser.class).withIgnoreLeadingWhiteSpace(true).build();
+        ColumnPositionMappingStrategy strategy = new ColumnPositionMappingStrategy();
+        strategy.setType(MyUser.class);
+        String[] memberFieldToBindTo = {"name","email","phoneNo","country"};
+        strategy.setColumnMapping(memberFieldToBindTo);
 
-        List<CSVUser> csvUsers= csvToBean.parse();
+        CsvToBean<MyUser> csvToBean = new CsvToBeanBuilder(reader).withMappingStrategy(strategy).withSkipLines(1).withIgnoreLeadingWhiteSpace(true).build();
+        Iterator<MyUser> myUserIterator = csvToBean.iterator();
 
-        for(CSVUser csvUser:csvUsers){
-
-            System.out.println("NAME:"+csvUser.getName());
-            System.out.println("Email:"+csvUser.getEmail());
-            System.out.println("PhoneNo:"+csvUser.getPhoneNo());
-            System.out.println("Country:"+csvUser.getCountry());
-            System.out.println("===================================");
+        while(myUserIterator.hasNext()){
+            MyUser myUser = myUserIterator.next();
+            System.out.println("NAME:"+myUser.getName());
+            System.out.println("Email:"+myUser.getEmail());
+            System.out.println("PhoneNo:"+myUser.getPhoneNo());
+            System.out.println("Country:"+myUser.getCountry());
+            System.out.println("=================================");
         }
         };
     }
