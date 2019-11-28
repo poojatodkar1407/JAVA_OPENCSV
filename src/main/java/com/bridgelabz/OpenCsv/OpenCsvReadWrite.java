@@ -2,10 +2,12 @@ package com.bridgelabz.OpenCsv;
 
 import com.opencsv.CSVReader;
 
+import javax.print.DocFlavor;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 public class OpenCsvReadWrite {
 
@@ -16,8 +18,8 @@ public class OpenCsvReadWrite {
                 Reader reader = Files.newBufferedReader(Paths.get(SAMPLE_CSV_FILE_PATH));
                 CSVReader csvReader = new CSVReader(reader);
         ) {
-            String[] nextRecord;
-            while ((nextRecord = csvReader.readNext()) != null){
+            List<String[]> nextRecords = csvReader.readAll();
+            for(String[] nextRecord : nextRecords){
                 System.out.println("NAME:"+nextRecord[0]);
                 System.out.println("Email:"+nextRecord[1]);
                 System.out.println("Phone:"+nextRecord[2]);
